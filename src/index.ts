@@ -1,4 +1,27 @@
+import { impressumHtml, privacyHtml } from "./legal.ts";
 import { pageHtml } from "./page.ts";
+
+const pages: Record<string, () => string> = {
+	"/": pageHtml,
+	"/index.html": pageHtml,
+	"/impressum": impressumHtml,
+	"/datenschutz": privacyHtml,
+};
+
+const aliases: Record<string, string> = {
+	"/imprint": "/impressum",
+	"/privacy": "/datenschutz",
+};
+
+function html(body: string, status = 200): Response {
+	return new Response(body, {
+		status,
+		headers: {
+			"content-type": "text/html; charset=utf-8",
+			"cache-control": "public, max-age=60",
+		},
+	});
+}
 
 export default {
 	fetch(request: Request): Response {
@@ -7,14 +30,19 @@ export default {
 			url.hostname = "rafaelgaspar.xyz";
 			return Response.redirect(url.toString(), 301);
 		}
-		if (url.pathname !== "/" && url.pathname !== "/index.html") {
-			return new Response("Not found", { status: 404 });
+		let path = url.pathname;
+		if (path.length > 1 && path.endsWith("/")) {
+			path = path.slice(0, -1);
 		}
-		return new Response(pageHtml(), {
-			headers: {
-				"content-type": "text/html; charset=utf-8",
-				"cache-control": "public, max-age=60",
-			},
-		});
+		const alias = aliases[path];
+		if (alias) {
+			url.pathname = alias;
+			return Response.redirect(url.toString(), 301);
+		}
+		const render = pages[path];
+		if (!render) {
+			return html("Not found", 404);
+		}
+		return html(render());
 	},
 } satisfies ExportedHandler;
