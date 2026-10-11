@@ -15,10 +15,10 @@ export const SPOTLIGHT: readonly SpotlightRepo[] = [
 		language: "Go",
 	},
 	{
-		owner: "larsjuhw",
-		name: "homebridge-philips-tv-2020",
+		owner: "rafaelgaspar",
+		name: "homebridge-philipstv-hue-2020",
 		title: "Philips TV in HomeKit",
-		blurb: "Homebridge plugin for non-Android 2020 Philips TVs. Power, volume, and inputs from HomeKit — the living-room set talks through this.",
+		blurb: "Homebridge plugin for Philips TVs — power, volume, Ambilight, and inputs. Forked for Saphi sets that only expose Ambilight on/off.",
 		language: "JavaScript",
 	},
 	{
